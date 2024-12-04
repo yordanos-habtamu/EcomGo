@@ -1,0 +1,5 @@
+{
+    "go.toolsEnvVars": {
+        "GOENV": "/home/creed47/.config/go/env"
+    }
+}

@@ -1,0 +1,41 @@
+package config
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
+type Config struct {
+   PUBLIC_HOST string
+   PORT string
+   DB_PORT string
+   DB_USER string
+   DB_PWD  string
+   DB_NAME string
+   DB_ADDR string
+ }
+
+var Envs = initConfig();
+
+func initConfig() Config{
+	godotenv.Load()
+return Config{
+	PUBLIC_HOST:getEnv("PUBLIC_HOST","http://localhost"),
+	PORT:getEnv("PORT","8080"),
+	DB_PORT: getEnv("DB_PORT","3306"),
+	DB_USER: getEnv("DB_USER","root"),
+	DB_PWD: getEnv("DB_PWD","yordanos"),
+	DB_NAME: getEnv("DB_NAME","EcomGo"),
+	DB_ADDR: fmt.Sprintf("%s:%s",getEnv("PUBLIC_HOST","127.0.0.1"),getEnv("DB_PORT","3306")),	
+
+}
+}
+
+func getEnv(key,fallback string) string{
+if value,ok := os.LookupEnv(key); ok{
+	return value
+}
+	return fallback
+}
