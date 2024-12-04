@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
@@ -29,10 +30,14 @@ func (h* Handler) handleLogin(w http.ResponseWriter, r*http.Request){
 func (h* Handler) handleRegister(w http.ResponseWriter, r*http.Request){
 // get the payload
 var payload types.RegisterUserPayload
-if err := utils.ParseJson(r,payload); err != nil{
+if err := utils.ParseJson(r,&payload); err != nil{
 	utils.WriteError(w, http.StatusBadRequest,err)
 }
 
+if err := utils.Validate.Struct(payload); err!= nil{
+	error := err.(validator.ValidationErrors)
+	utils.WriteError(w,http.StatusBadRequest,fmt.Errorf("invalid request been sent %s",error))
+}
 //check if the user exists
  _, err := h.store.GetUserByEmail(payload.Email)
  if err == nil {

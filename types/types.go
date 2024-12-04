@@ -22,11 +22,11 @@ type User struct {
 
 
 type RegisterUserPayload struct {
-	FirstName string  `json:"firstName"`
-	LastName  string   `json:"lastName"`
-	Email     string    `json:"email"`
-	Age       uint        `json:"age"`
-	DoB       time.Time    `json:"DoB"`
-	Sex       string      `json:"sex"`
-	Password   string      `json:"password"`
+	FirstName string  `json:"firstName" validate:"required"`
+	LastName  string   `json:"lastName" validate:"required"`
+	Email     string    `json:"email" validate:"required,email"` 
+	Age       uint        `json:"age" validate:"required"`
+	DoB       time.Time    `json:"DoB" validate:"required"`
+	Sex       string      `json:"sex" validate:"required"`
+	Password   string      `json:"password" validate:"required,min=6,max=12"`
 }
