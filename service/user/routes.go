@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
@@ -56,7 +55,6 @@ err = h.store.CreateUser(types.User{
 	LastName: payload.LastName,
 	Email: payload.Email,
 	Password: hashedPassword,
-	Age: payload.Age,
 	DoB: payload.DoB,
 	Sex : payload.Sex,
 })

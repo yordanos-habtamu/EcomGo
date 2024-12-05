@@ -12,7 +12,6 @@ type User struct {
 	ID  uint  `json:"Id"`
 	FirstName string `json:"firstName"`
 	LastName string   `json:"lastName"`
-	Age  uint     `json:"age"`
 	Sex string `json:"sex"`
 	Email string     `json:"email"`
 	DoB time.Time     `json:"DoB"`
