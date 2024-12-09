@@ -32,8 +32,7 @@ func TestUserServiceHandlers(t *testing.T){
 		    LastName: "123",
 			Email:"hh@gmail.com",
 			Password: "asd",
-			Age:21,
-			DoB: dob,
+			DoB: dateStr,
 			Sex : "Male",
 		}
 		marshalled,_ := json.Marshal(payload)

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
@@ -50,12 +52,19 @@ if err != nil {
 	log.Fatal(err)
 }
 
+// The layout for parsing (Go's reference date is "2006-01-02 15:04:05")
+layout := "2006-01-02"
+dob, err := time.Parse(layout, payload.DoB)
+if err != nil {
+	log.Fatal(err)
+}
+
 err = h.store.CreateUser(types.User{
 	FirstName: payload.FirstName,
 	LastName: payload.LastName,
 	Email: payload.Email,
 	Password: hashedPassword,
-	DoB: payload.DoB,
+	DoB: dob,
 	Sex : payload.Sex,
 })
  
