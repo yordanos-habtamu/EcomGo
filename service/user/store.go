@@ -41,9 +41,10 @@ func scanRowsIntoUsers(rows *sql.Rows) (*types.User,error){
      &user.FirstName,
      &user.LastName,
      &user.Email,
-     &user.DoB,
      &user.Password,
      &user.CreatedAt,
+     &user.DoB,
+     &user.Sex,
   )
   if err != nil{
     log.Fatal(err)

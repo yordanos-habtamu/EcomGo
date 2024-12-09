@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+
+	"time"
+)
 
 type UserStore interface{
 	GetUserByEmail(email string) (*User,error)
@@ -27,4 +30,9 @@ type RegisterUserPayload struct {
 	DoB       string    `json:"DoB" validate:"required"`
 	Sex       string      `json:"sex" validate:"required"`
 	Password   string      `json:"password" validate:"required,min=6,max=12"`
+}
+
+type LoginUserPayload struct {
+	Email string 	`json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }

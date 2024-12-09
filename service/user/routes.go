@@ -2,12 +2,14 @@ package user
 
 import (
 	"fmt"
+
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/yordanos-habtamu/EcomGo.git/config"
 	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
 	"github.com/yordanos-habtamu/EcomGo.git/utils"
@@ -26,6 +28,31 @@ func(h* Handler) RegisterRoutes(router *mux.Router){
    router.HandleFunc("/register",h.handleRegister).Methods("POST")
 }
 func (h* Handler) handleLogin(w http.ResponseWriter, r*http.Request){
+	var payload types.LoginUserPayload
+	if err := utils.ParseJson(r,&payload); err != nil{
+		utils.WriteError(w, http.StatusBadRequest,err)
+	}
+	
+	if err := utils.Validate.Struct(payload); err!= nil{
+		error := err.(validator.ValidationErrors)
+		utils.WriteError(w,http.StatusBadRequest,fmt.Errorf("invalid email or password %s",error))
+	}
+
+	u,err := h.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		log.Fatal("user need to register first")
+		return
+	}
+	if !auth.ComparePassword(u.Password,[]byte(payload.Password)){
+		utils.WriteError(w,http.StatusBadRequest,fmt.Errorf("invalid password used"))
+		return 
+	} 
+
+	secret := []byte(config.Envs.JWT_SECRET)
+	token,err := auth.CreateJWT()
+	utils.WriteJson(w,http.StatusOK,map[string]string{"token":""})
+    
+
 
 }
 func (h* Handler) handleRegister(w http.ResponseWriter, r*http.Request){

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,8 @@ type Config struct {
    DB_PWD  string
    DB_NAME string
    DB_ADDR string
+   JWTExpiration int64
+   JWT_SECRET string
  }
 
 var Envs = initConfig();
@@ -29,7 +32,8 @@ return Config{
 	DB_PWD: getEnv("DB_PWD","yordanos"),
 	DB_NAME: getEnv("DB_NAME","EcomGo"),
 	DB_ADDR: fmt.Sprintf("%s:%s",getEnv("PUBLIC_HOST","127.0.0.1"),getEnv("DB_PORT","3306")),	
-
+    JWTExpiration: getEnvAsInt("JWTExpiration",3600 * 24 * 7),
+	JWT_SECRET: getEnv("JWT_SECRET",""),
 }
 }
 
@@ -38,4 +42,16 @@ if value,ok := os.LookupEnv(key); ok{
 	return value
 }
 	return fallback
+}
+
+func getEnvAsInt(key string,fallback int64) (int64){
+
+   if value, ok := os.LookupEnv(key); ok{
+	i, err := strconv.ParseInt(value,10,64)
+	if err != nil {
+		return fallback
+	}
+	return i
+   }
+   return fallback
 }
