@@ -33,7 +33,7 @@ return Config{
 	DB_NAME: getEnv("DB_NAME","EcomGo"),
 	DB_ADDR: fmt.Sprintf("%s:%s",getEnv("PUBLIC_HOST","127.0.0.1"),getEnv("DB_PORT","3306")),	
     JWTExpiration: getEnvAsInt("JWTExpiration",3600 * 24 * 7),
-	JWT_SECRET: getEnv("JWT_SECRET",""),
+	JWT_SECRET: getEnv("JWT_SECRET","$2b$10$yG7Ivndj5Q7FxXHvfY1Xh.1yqFOsclCAXPYygwKopAZwgUDEn2WS6"),
 }
 }
 

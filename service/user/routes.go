@@ -27,34 +27,51 @@ func(h* Handler) RegisterRoutes(router *mux.Router){
    router.HandleFunc("/login",h.handleLogin).Methods("POST")
    router.HandleFunc("/register",h.handleRegister).Methods("POST")
 }
-func (h* Handler) handleLogin(w http.ResponseWriter, r*http.Request){
-	var payload types.LoginUserPayload
-	if err := utils.ParseJson(r,&payload); err != nil{
-		utils.WriteError(w, http.StatusBadRequest,err)
-	}
-	
-	if err := utils.Validate.Struct(payload); err!= nil{
-		error := err.(validator.ValidationErrors)
-		utils.WriteError(w,http.StatusBadRequest,fmt.Errorf("invalid email or password %s",error))
-	}
+func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+    var payload types.LoginUserPayload
 
-	u,err := h.store.GetUserByEmail(payload.Email)
-	if err != nil {
-		log.Fatal("user need to register first")
-		return
-	}
-	if !auth.ComparePassword(u.Password,[]byte(payload.Password)){
-		utils.WriteError(w,http.StatusBadRequest,fmt.Errorf("invalid password used"))
-		return 
-	} 
+    // Parse JSON payload
+    if err := utils.ParseJson(r, &payload); err != nil {
+        log.Printf("Failed to parse JSON: %v", err)
+        utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
+        return
+    }
 
-	secret := []byte(config.Envs.JWT_SECRET)
-	token,err := auth.CreateJWT()
-	utils.WriteJson(w,http.StatusOK,map[string]string{"token":""})
-    
+    // Validate input
+    if err := utils.Validate.Struct(payload); err != nil {
+        log.Printf("Validation error: %v", err)
+        utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+        return
+    }
 
+    // Check if user exists
+    u, err := h.store.GetUserByEmail(payload.Email)
+    if err != nil {
+        log.Printf("User not found: %v", err)
+        utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("user needs to register first"))
+        return
+    }
 
+    // Verify password
+    if !auth.ComparePassword(u.Password, []byte(payload.Password)) {
+        log.Printf("Invalid password for user: %s", payload.Email)
+        utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("invalid password"))
+        return
+    }
+
+    // Generate JWT
+    secret := []byte(config.Envs.JWT_SECRET)
+    token, err := auth.CreateJWT(secret, int(u.ID))
+    if err != nil {
+        log.Printf("Error creating JWT: %v", err)
+        utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to create token"))
+        return
+    }
+
+    // Respond with token
+    utils.WriteJson(w, http.StatusOK, map[string]string{"token": token})
 }
+
 func (h* Handler) handleRegister(w http.ResponseWriter, r*http.Request){
 // get the payload
 var payload types.RegisterUserPayload
