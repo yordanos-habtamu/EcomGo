@@ -20,6 +20,7 @@ type User struct {
 	DoB time.Time   `json:"DoB"`
 	Password string  `json:"password"`
 	CreatedAt time.Time `json:"createdAt"`
+	Role   string  `json:"role"`
 }
 
 
@@ -30,6 +31,7 @@ type RegisterUserPayload struct {
 	DoB       string    `json:"DoB" validate:"required"`
 	Sex       string      `json:"sex" validate:"required"`
 	Password   string      `json:"password" validate:"required,min=6,max=12"`
+	Role       string      `json:"role"`
 }
 
 type LoginUserPayload struct {

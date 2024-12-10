@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   `lastName` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
+  `DoB` Date NOT NULL,
   `sex` ENUM('male', 'female') NOT NULL,
   `role` ENUM('admin', 'customer', 'seller') NOT NULL DEFAULT 'customer',
   `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

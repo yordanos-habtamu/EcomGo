@@ -61,7 +61,7 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 
     // Generate JWT
     secret := []byte(config.Envs.JWT_SECRET)
-    token, err := auth.CreateJWT(secret, int(u.ID))
+    token, err := auth.CreateJWT(secret, int(u.ID),u.Role)
     if err != nil {
         log.Printf("Error creating JWT: %v", err)
         utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to create token"))
@@ -98,20 +98,30 @@ if err != nil {
 
 // The layout for parsing (Go's reference date is "2006-01-02 15:04:05")
 layout := "2006-01-02"
+log.Printf("Received DoB: %s", payload.DoB) // Debug print
+
 dob, err := time.Parse(layout, payload.DoB)
 if err != nil {
-	log.Fatal(err)
+    log.Printf("Error parsing DoB: %v", err)
+    http.Error(w, "Invalid Date of Birth format, expected YYYY-MM-DD", http.StatusBadRequest)
+    return
 }
 
+// Assuming CreateUser is a method of your store that stores the user in the DB
 err = h.store.CreateUser(types.User{
-	FirstName: payload.FirstName,
-	LastName: payload.LastName,
-	Email: payload.Email,
-	Password: hashedPassword,
-	DoB: dob,
-	Sex : payload.Sex,
+    FirstName: payload.FirstName,
+    LastName:  payload.LastName,
+    Email:     payload.Email,
+    Password:  hashedPassword,
+    DoB:       dob,
+    Sex:       payload.Sex,
+    Role:      payload.Role,
 })
- 
+if err != nil {
+    log.Printf("Error creating user: %v", err)
+    http.Error(w, "Error creating user", http.StatusInternalServerError)
+    return
+}
 if err != nil {
 	utils.WriteError(w, http.StatusInternalServerError,err)
 	return
