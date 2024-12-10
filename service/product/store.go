@@ -10,71 +10,106 @@ import (
 
 type Store struct {
 	db *sql.DB
-  }
-  
-  func NewStore (db *sql.DB) *Store {
-	return &Store{db:db}
-  }
-  
-  func (s *Store) GetUserByEmail (email string) (*types.User,error){
-	rows,err := s.db.Query("SELECT * FROM users WHERE email = ?",email)
-	if err != nil{
-	 return nil,err
+}
+
+// CreateProduct implements types.ProductStore.
+func (s *Store) CreateProduct(payload types.RegisterProductPayload) (types.Product, error) {
+	panic("unimplemented")
+}
+
+// DeleteProduct implements types.ProductStore.
+func (s *Store) DeleteProduct(id uint) error {
+	panic("unimplemented")
+}
+
+// GetAllProducts implements types.ProductStore.
+func (s *Store) GetAllProducts() ([]types.Product, error) {
+	panic("unimplemented")
+}
+
+// GetProductByID implements types.ProductStore.
+func (s *Store) GetProductByID(id uint) (types.Product, error) {
+	panic("unimplemented")
+}
+
+// GetProductByName implements types.ProductStore.
+func (s *Store) GetProductByName(name string) (types.Product, error) {
+	panic("unimplemented")
+}
+
+// GetProductsByCategory implements types.ProductStore.
+func (s *Store) GetProductsByCategory(category string) ([]types.Product, error) {
+	panic("unimplemented")
+}
+
+// UpdateProduct implements types.ProductStore.
+func (s *Store) UpdateProduct(id uint, payload types.RegisterProductPayload) (types.Product, error) {
+	panic("unimplemented")
+}
+
+func NewStore(db *sql.DB) *Store {
+	return &Store{db: db}
+}
+
+func (s *Store) GetUserByEmail(email string) (*types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users WHERE email = ?", email)
+	if err != nil {
+		return nil, err
 	}
 	u := new(types.User)
-	for rows.Next(){
-	 u,err = scanRowsIntoUsers(rows)
-	 if err!=nil{
-	   return nil,err
-	 }
+	for rows.Next() {
+		u, err = scanRowsIntoUsers(rows)
+		if err != nil {
+			return nil, err
+		}
 	}
 	if u.ID == 0 {
-	 return nil , fmt.Errorf("user not found")
+		return nil, fmt.Errorf("user not found")
 	}
-	return u,nil
- }
- 
- func scanRowsIntoUsers(rows *sql.Rows) (*types.User,error){
-   user := new(types.User)
-   err := rows.Scan(
-	  &user.ID,
-	  &user.FirstName,
-	  &user.LastName,
-	  &user.Email,
-	  &user.Password,
-	  &user.Sex,
-	  &user.Role,
-	  &user.CreatedAt,
-	  &user.DoB,
-   )
-   if err != nil{
-	 log.Fatal(err)
-   }
-	 return user , nil
- }
- 
- func (s *Store) GetUserById(id int) (*types.User,error){
-   rows,err := s.db.Query("SELECT * FROM users WHERE id = ?",id)
-   if err != nil {
-	 return nil,err
-   }
-   u := new(types.User)
-   for rows.Next(){
-	   u,err = scanRowsIntoUsers(rows)
-	   if err != nil{
-		  return nil,err
-	   }
-   }
-   if u.ID == 0{
-	 return nil, fmt.Errorf("user not found")
-   }
-   return u,nil
- }
- 
- func (s *Store) CreateUser(user types.User) error {
-   _,err := s.db.Exec("INSERT INTO users (firstName,lastName,email,password,DoB,sex) VALUES (?,?,?,?,?,?)",user.FirstName,user.LastName,user.Email,user.Password,user.DoB,user.Sex)
-   if err != nil {
-	 return err
-   }
-   return nil
- }
+	return u, nil
+}
+
+func scanRowsIntoUsers(rows *sql.Rows) (*types.User, error) {
+	user := new(types.User)
+	err := rows.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.Password,
+		&user.Sex,
+		&user.Role,
+		&user.CreatedAt,
+		&user.DoB,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return user, nil
+}
+
+func (s *Store) GetUserById(id int) (*types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users WHERE id = ?", id)
+	if err != nil {
+		return nil, err
+	}
+	u := new(types.User)
+	for rows.Next() {
+		u, err = scanRowsIntoUsers(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if u.ID == 0 {
+		return nil, fmt.Errorf("user not found")
+	}
+	return u, nil
+}
+
+func (s *Store) CreateUser(user types.User) error {
+	_, err := s.db.Exec("INSERT INTO users (firstName,lastName,email,password,DoB,sex) VALUES (?,?,?,?,?,?)", user.FirstName, user.LastName, user.Email, user.Password, user.DoB, user.Sex)
+	if err != nil {
+		return err
+	}
+	return nil
+}

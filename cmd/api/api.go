@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/yordanos-habtamu/EcomGo.git/service/product"
 	"github.com/yordanos-habtamu/EcomGo.git/service/user"
 
 	"github.com/gorilla/mux"
@@ -27,6 +28,9 @@ func (s *ApiServer) Run() error{
 	router := mux.NewRouter();
 	subrouter := router.PathPrefix("/api/v1").Subrouter();
     userStore := user.NewStore(s.db)
+	productStore := product.NewStore(s.db)
+	productHandler := product.NewHandler(productStore)
+	productHandler.RegisterRoutes(subrouter)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
 
