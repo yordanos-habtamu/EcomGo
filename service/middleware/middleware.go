@@ -52,55 +52,54 @@ func SetJWTInSession(w http.ResponseWriter, r *http.Request, tokenString string)
 }
 
 // JwtMiddleware is a middleware to check for valid JWT tokens and enforce RBAC
-func JwtMiddleware(requiredRole string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("authorization header is missing"))
-			return
-		}
+func JwtMiddleware(allowedRoles ...string) func(http.HandlerFunc) http.HandlerFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				utils.WriteError(w,  http.StatusUnauthorized,fmt.Errorf("Authorization header is missing"))
+				return
+			}
 
-		parts := strings.Split(authHeader, " ")
-		if len(parts) == 2 {
-			// The token is the second part of the split result
+			parts := strings.Split(authHeader, " ")
+			if len(parts) != 2 {
+				utils.WriteError(w,  http.StatusUnauthorized,fmt.Errorf("Invalid authorization header format"))
+				return
+			}
+
 			tokenString := parts[1]
 			token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return secretKey, nil
 			})
 
-			if err != nil {
-				utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("not authorized"))
+			if err != nil || !token.Valid {
+				utils.WriteError(w, http.StatusUnauthorized,fmt.Errorf("Invalid token"))
 				return
 			}
 
-			// Extract claims and check if the token is valid
 			claims, ok := token.Claims.(*CustomClaims)
-			if !ok || !token.Valid {
-				http.Error(w, "Invalid token", http.StatusUnauthorized)
+			if !ok {
+				utils.WriteError(w,  http.StatusUnauthorized,fmt.Errorf("Invalid token claims"))
 				return
 			}
 
-			// Add the user information to the context
+			// Check if the user's role is in the allowed roles
+			roleAllowed := false
+			for _, role := range allowedRoles {
+				if claims.Role == role {
+					roleAllowed = true
+					break
+				}
+			}
+
+			if !roleAllowed {
+				utils.WriteError(w, http.StatusForbidden, fmt.Errorf("Forbidden: Insufficient permissions"))
+				return
+			}
+
+			// Add user info to the request context
 			ctx := context.WithValue(r.Context(), "user", claims)
-			r = r.WithContext(ctx)
-
-			// Check the user's role if required
-			if requiredRole != "" && claims.Role != requiredRole {
-				http.Error(w, "Forbidden", http.StatusForbidden)
-				return
-			}
-
-			// Proceed to the next handler
-			// You need to make sure the next handler is passed as an argument to this middleware
-			next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Your actual handler logic goes here
-			})
-			next.ServeHTTP(w, r)
-			return
-		} else {
-			// Handle error if the header is not in the correct format
-			utils.WriteError(w, http.StatusUnauthorized, fmt.Errorf("invalid authorization header"))
-			return
+			next(w, r.WithContext(ctx))
 		}
 	}
 }
