@@ -13,13 +13,13 @@ type UserStore interface{
 
 
 type ProductStore interface {
-	CreateProduct(payload RegisterProductPayload) (Product, error)
-	GetProductByID(id uint) (Product, error)
+	CreateProduct(payload RegisterProductPayload) (error)
+	GetProductById(id uint) (*Product, error)
 	GetAllProducts() ([]Product, error)
-	UpdateProduct(id uint, payload RegisterProductPayload) (Product, error)
+	UpdateProduct(id uint, payload RegisterProductPayload) (*Product, error)
 	DeleteProduct(id uint) error
 	GetProductsByCategory(category string) ([]Product, error)
-	GetProductByName(name string) (Product, error)
+	GetProductByName(name string) (*Product, error)
 }
 
 
