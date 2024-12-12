@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"github.com/go-playground/validator/v10"
+	"strconv"
 
+	"github.com/go-playground/validator/v10"
 )
 
 var Validate = validator.New()
@@ -24,4 +25,12 @@ func WriteJson (w http.ResponseWriter, status int , v any) error{
 
 func WriteError(w http.ResponseWriter, status int,err error){
 	WriteJson(w , status,map[string]string{"error":err.Error()})
+}
+
+func StringToUint(str string) (uint, error) {
+    value, err := strconv.ParseUint(str, 10, 32)
+    if err != nil {
+        return 0, err
+    }
+    return uint(value), nil
 }

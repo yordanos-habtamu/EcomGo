@@ -63,38 +63,48 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter,r *http.Request){
 
 }
 
-func (h *Handler) handleGetProductByID(w http.ResponseWriter,r *http.Request){
-	var payload types.RegisterProductPayload
-	if err := utils.ParseJson(r,&payload); err !=nil{
-		log.Printf("Failed to parse JSON: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
+func (h *Handler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
+	// Extract the ID from the URL path parameters
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("product ID is missing in the URL"))
 		return
 	}
-	if err := utils.Validate.Struct(payload); err != nil {
-		log.Printf("Validation error: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+
+	// Convert the ID to the appropriate type (e.g., uint)
+	productID, err := utils.StringToUint(id) // Assuming you have a utility to convert string to uint
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid product ID format"))
 		return
 	}
-	_,err := h.store.GetProductById(payload.ID)
 
+	// Fetch the product by ID from the database
+	product, err := h.store.GetProductById(productID)
+	if err != nil {
+		log.Printf("Failed to fetch product: %v", err)
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("product not found"))
+		return
+	}
 
+	// Return the product as a JSON response
+	utils.WriteJson(w, http.StatusOK, product)
 }
 
-func (h *Handler) handleGetAllProducts(w http.ResponseWriter,r *http.Request){
-	var payload types.RegisterProductPayload
-	if err := utils.ParseJson(r,&payload); err !=nil{
-		log.Printf("Failed to parse JSON: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
-		return
-	}
-	if err := utils.Validate.Struct(payload); err != nil {
-		log.Printf("Validation error: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+
+func (h *Handler) handleGetAllProducts(w http.ResponseWriter, r *http.Request) {
+	// Fetch all products from the store
+	products, err := h.store.GetAllProducts()
+	if err != nil {
+		log.Printf("Failed to fetch products: %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch products"))
 		return
 	}
 
-
+	// Return the products as a JSON response
+	utils.WriteJson(w, http.StatusOK, products)
 }
+
 
 func (h *Handler) handleUpdateProduct(w http.ResponseWriter,r *http.Request){
 	var payload types.RegisterProductPayload
