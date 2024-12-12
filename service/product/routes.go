@@ -28,7 +28,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products/{id:[0-9]+}", h.handleGetProductByID).Methods("GET")
 	router.HandleFunc("/products", h.handleGetAllProducts).Methods("GET")
 	router.HandleFunc("/products/{id:[0-9]+}", adminOnlyMiddleware(h.handleUpdateProduct)).Methods("PUT")
-	router.HandleFunc("/products/{id:[0-9]+}", h.handleDeleteProduct).Methods("DELETE")
+	router.HandleFunc("/products/{id:[0-9]+}", adminOnlyMiddleware( h.handleDeleteProduct)).Methods("DELETE")
 	router.HandleFunc("/products/category/{category}", h.handleGetProductsByCategory).Methods("GET")
 }
 
@@ -44,7 +44,21 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter,r *http.Request){
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
 		return
 	}
-	
+   err := h.store.CreateProduct(types.Product{
+		Name:        payload.Name,
+		Description: payload.Description,
+		Price:       payload.Price,
+		Stock:       payload.Stock,
+		Catagory:    payload.Catagory,
+		ImgUrl:      payload.ImgUrl,
+	})
+	if err != nil {
+		log.Printf("Error creating product : %v",err)
+		http.Error(w,"Error creating user",http.StatusInternalServerError)
+	    return
+		} 
+
+		utils.WriteJson(w,http.StatusCreated,map[string]string{"message":"product created successfully"})
 
 
 }
@@ -61,6 +75,7 @@ func (h *Handler) handleGetProductByID(w http.ResponseWriter,r *http.Request){
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
 		return
 	}
+	_,err := h.store.GetProductById(payload.ID)
 
 
 }
