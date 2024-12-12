@@ -110,7 +110,8 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Date of Birth format, expected YYYY-MM-DD", http.StatusBadRequest)
 		return
 	}
-
+     
+	fmt.Println(payload.Role)
 	// Create the user in the database
 	err = h.store.CreateUser(types.User{
 		FirstName: payload.FirstName,
