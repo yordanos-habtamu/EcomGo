@@ -7,8 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/middleware"
-	"github.com/yordanos-habtamu/EcomGo.git/service/product"
-	"github.com/yordanos-habtamu/EcomGo.git/types"
+    "github.com/yordanos-habtamu/EcomGo.git/types"
 	"github.com/yordanos-habtamu/EcomGo.git/utils"
 )
 
