@@ -108,6 +108,17 @@ func (h *Handler) handleGetAllProducts(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleUpdateProduct(w http.ResponseWriter,r *http.Request){
 	var payload types.RegisterProductPayload
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("product ID is missing in the URL"))
+		return
+	}
+	productID, err := utils.StringToUint(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid product ID format"))
+		return
+	} //
 	if err := utils.ParseJson(r,&payload); err !=nil{
 		log.Printf("Failed to parse JSON: %v", err)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
@@ -118,23 +129,36 @@ func (h *Handler) handleUpdateProduct(w http.ResponseWriter,r *http.Request){
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
 		return
 	}
-
-
+    
+	p,err:= h.store.UpdateProduct(productID,payload)
+	if err != nil {
+		log.Printf("Failed to update the product: %v", err)
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch products"))
+		return
+	}
+	utils.WriteJson(w, http.StatusOK, p)
 }
 
 func (h *Handler) handleDeleteProduct(w http.ResponseWriter,r *http.Request){
-	var payload types.RegisterProductPayload
-	if err := utils.ParseJson(r,&payload); err !=nil{
-		log.Printf("Failed to parse JSON: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
+    vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("product ID is missing in the URL"))
 		return
 	}
-	if err := utils.Validate.Struct(payload); err != nil {
-		log.Printf("Validation error: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+	productID, err := utils.StringToUint(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid product ID format"))
+		return
+	} //
+    
+	k:= h.store.DeleteProduct(productID)
+	if k!=nil{
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("unable to delete the product %v",k))
 		return
 	}
-
+  
+	utils.WriteJson(w, http.StatusOK,map[string]string{"message":"Removed the product succefully"})
 
 }
 
