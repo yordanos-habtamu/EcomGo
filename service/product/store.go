@@ -13,7 +13,7 @@ type Store struct {
 }
 
 // CreateProduct implements types.ProductStore.
-func (s *Store) CreateProduct(payload types.RegisterProductPayload) ( error) {
+func (s *Store) CreateProduct(payload types.Product) ( error) {
 	_,err := s.db.Exec("INSERT INTO products (name,description,price,stock,catagory,imgUrl,isActive) VALUES (?,?,?,?,?,?,?)",payload.Name,payload.Description,payload.Price,payload.Stock,payload.Catagory,payload.ImgUrl,payload.IsActive)
      if err != nil {
 		return err
