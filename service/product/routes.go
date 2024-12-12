@@ -54,7 +54,7 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter,r *http.Request){
 	})
 	if err != nil {
 		log.Printf("Error creating product : %v",err)
-		http.Error(w,"Error creating user",http.StatusInternalServerError)
+		http.Error(w,"Error creating product",http.StatusInternalServerError)
 	    return
 		} 
 
