@@ -11,6 +11,10 @@ type UserStore interface{
 	GetUserById(id int) (*User,error)
 }
 
+type CartStore interface {
+	CreateOrder (Order) (int,error)
+	CreateOrderItem(OrderItem) error
+}
 
 type ProductStore interface {
 	CreateProduct(Product) (error)
@@ -47,7 +51,21 @@ type Product struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 	IsActive bool `json:"isActive"`
 }
-
+type Order struct {
+	ID  	uint  		`json:"id"`
+    UserID 	uint 	`json:"userId"`
+	Total 	float64 	`json:"total"`
+	Status 	string 	`json:"status"`
+	Address string	`json:"address"`
+	CreatedAt string `json:"createdAt"`
+	BillingAddress string `json:"billingAddress"`                  
+	PaymentMethod  string `json:"paymentMethod"`
+	PaymentStatus  string  `json:"paymentStatus"`  
+	OrderDate  time.Time   `json:"orderDate"`
+	ShipmentDate time.Time `json:"shipmentDate"`              
+	DeliveryDate time.Time `json:"deliveryDate"`
+    TrackingNumber int `json:"trackingNumber"` 
+ }
 type RegisterProductPayload struct {
 	Name string `json:"name"`
 	Description string `json:"description"`
