@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/middleware"
+	"github.com/yordanos-habtamu/EcomGo.git/service/product"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
 	"github.com/yordanos-habtamu/EcomGo.git/utils"
 )
@@ -163,17 +164,19 @@ func (h *Handler) handleDeleteProduct(w http.ResponseWriter,r *http.Request){
 }
 
 func (h *Handler) handleGetProductsByCategory(w http.ResponseWriter,r *http.Request){
-	var payload types.RegisterProductPayload
-	if err := utils.ParseJson(r,&payload); err !=nil{
-		log.Printf("Failed to parse JSON: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request format"))
+	vars := mux.Vars(r)
+	catagory, ok := vars["category"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("product Catagory is missing in the URL"))
 		return
 	}
-	if err := utils.Validate.Struct(payload); err != nil {
-		log.Printf("Validation error: %v", err)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+	
+	products,err := h.store.GetProductsByCategory(catagory)
+	   if err!=nil{
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("unable to get the catagories %v",err))
 		return
 	}
 
-
+	utils.WriteJson(w,http.StatusOK,products)
+   
 }
