@@ -66,6 +66,15 @@ type Order struct {
 	DeliveryDate time.Time `json:"deliveryDate"`
     TrackingNumber int `json:"trackingNumber"` 
  }
+
+ type OrderItem struct {
+    ID  uint `json:"id"`
+	ProductID uint `json:"productId"`
+	OrderID uint  `json:"orderId"`
+	Quantity uint `json:"quantity"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+ }
 type RegisterProductPayload struct {
 	Name string `json:"name"`
 	Description string `json:"description"`
