@@ -1,76 +1,75 @@
-EcomGo
+# EcomGo
 
 EcomGo is an eCommerce API built using Golang. It provides core functionalities for managing users and products, supporting essential eCommerce workflows.
 
-Features
+## Features
 
-🧑‍💻 User Registration
+- 🧑‍💻 User Registration
+- ➕ Add, ❌ Remove, ✏️ Edit Products
+- 🛒 Checkout Process
 
-➕ Add, ❌ Remove, ✏️ Edit Products
+## Technologies Used
 
-🛒 Checkout Process
+- **Language:** 🐹 Golang
+- **Frameworks/Tools:** 📦 Mux, 🔐 JWT
+- **Database:** 🛢️ MySQL
+- **Migrations:** 🗂️ Migrate
 
-Technologies Used
+## Installation
 
-Language: 🐹 Golang
+### Prerequisites
 
-Frameworks/Tools: 📦 Mux, 🔐 JWT
+- ✅ Go installed on your system
+- ✅ MySQL database set up
 
-Database: 🛢️ MySQL
+### Steps
 
-Migrations: 🗂️ Migrate
+1. Clone the repository:
 
-Installation
+   ```bash
+   git clone <repository_url>
+   cd EcomGo
+   ```
 
-Prerequisites
+2. Install dependencies:
 
-✅ Go installed on your system
+   ```bash
+   go mod tidy
+   ```
 
-✅ MySQL database set up
+3. Configure the database connection in your project files (ensure the database name is `EcomGo`).
 
-Steps
+4. Apply migrations:
 
-Clone the repository:
+   ```bash
+   migrate -path ./migrations -database "mysql://user:password@tcp(localhost:3306)/EcomGo" up
+   ```
 
-git clone <repository_url>
-cd EcomGo
+5. Run the project:
 
-Install dependencies:
+   ```bash
+   go run main.go
+   ```
 
-go mod tidy
-
-Configure the database connection in your project files (ensure the database name is EcomGo).
-
-Apply migrations:
-
-migrate -path ./migrations -database "mysql://user:password@tcp(localhost:3306)/EcomGo" up
-
-Run the project:
-
-go run main.go
-
-Usage
+## Usage
 
 Use tools like Postman or cURL to interact with the API. Below are some example endpoints:
 
-Register User: /api/register
+- **Register User:** `/api/register`
+- **Add Product:** `/api/product/add`
+- **Edit Product:** `/api/product/edit`
+- **Remove Product:** `/api/product/remove`
+- **Checkout:** `/api/checkout`
 
-Add Product: /api/product/add
+## License
 
-Edit Product: /api/product/edit
+📜 This project is licensed under [LICENSE\_NAME].
 
-Remove Product: /api/product/remove
+## Contributors
 
-Checkout: /api/checkout
+- 👩‍💻 [Yo](https://github.com/your-profile)rdanos Habtamu
 
-License
-
-📜 This project is licensed under [LICENSE_NAME].
-
-Contributors
-
-👩‍💻 Yordanos Habtamu
-
-Acknowledgments
+## Acknowledgments
 
 💡 Thanks to the open-source community for providing tools and inspiration for this project.
+
