@@ -63,11 +63,11 @@ Use tools like Postman or cURL to interact with the API. Below are some example 
 
 ## License
 
-📜 This project is licensed under [LICENSE\_NAME].
+📜 This project is licensed under [LICENSE_NAME].
 
 ## Contributors
 
-- 👩‍💻 [Yo](https://github.com/your-profile)rdanos Habtamu
+- 👩‍💻 [Yordanos Habtamu](https://github.com/yordanos-habtamu)
 
 ## Acknowledgments
 
