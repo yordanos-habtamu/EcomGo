@@ -11,7 +11,7 @@ type UserStore interface{
 	GetUserById(id int) (*User,error)
 }
 
-type CartStore interface {
+type OrderStore interface {
 	CreateOrder (Order) (int,error)
 	CreateOrderItem(OrderItem) error
 }

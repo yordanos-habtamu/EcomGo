@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
 	"github.com/yordanos-habtamu/EcomGo.git/types"
 )
 

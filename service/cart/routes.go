@@ -9,10 +9,10 @@ import (
 
 
 type Handler struct {
-	store types.CartStore
+	store types.OrderStore
 }
 
-func NewHandler (store types.CartStore) *Handler{
+func NewHandler (store types.OrderStore) *Handler{
 	return &Handler{store:store}
 }
 
