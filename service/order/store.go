@@ -2,7 +2,7 @@ package cart
 
 import (
 	"database/sql"
-	"fmt"
+
 	"log"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
 )
@@ -16,64 +16,62 @@ func NewStore (db *sql.DB) *Store {
 
   
 func (s *Store) CreateOrder (order types.Order) (int,error){
-	rows,err := s.db.Exec("INSERT INTO orders (id,user_id,status,total_price,created_at) VALUES (?,?,?,?,?)",order.)
+	res,err := s.db.Exec("INSERT INTO orders (id,user_id,total,status,address,created_at,billing_address,payment_method,order_date,shipment_date,delivery_date,tracking_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	order.ID,order.UserID,order.Total,order.Status,order.Address,order.CreatedAt,order.BillingAddress,order.PaymentMethod,order.PaymentStatus,order.OrderDate,order.ShipmentDate,order.DeliveryDate,order.TrackingNumber)
 	if err != nil{
-	 return nil,err
+	 return 0,err
 	}
-	u := new(types.User)
-	for rows.Next(){
-	 u,err = scanRowsIntoUsers(rows)
-	 if err!=nil{
-	   return nil,err
-	 }
+	
+	id,err := res.LastInsertId()
+	if err != nil {
+		return 0,err
 	}
-	if u.ID == 0 {
-	 return nil , fmt.Errorf("user not found")
-	}
-	return u,nil
+	return int(id),nil
  }
  
- func scanRowsIntoUsers(rows *sql.Rows) (*types.User,error){
-   user := new(types.User)
+ func scanRowsIntoOrders(rows *sql.Rows) (*types.Order,error){
+   order := new(types.Order)
    err := rows.Scan(
-	  &user.ID,
-	  &user.FirstName,
-	  &user.LastName,
-	  &user.Email,
-	  &user.Password,
-	  &user.Sex,
-	  &user.Role,
-	  &user.CreatedAt,
-	  &user.DoB,
+	  &order.ID,
+	  &order.UserID,
+	  &order.Total,
+	  &order.Status,
+	  &order.Address,
+	  &order.BillingAddress,                
+	  &order.PaymentMethod,  
+	  &order.PaymentStatus,   
+	  &order.OrderDate,                 
+	  &order.DeliveryDate,
+	  &order.TrackingNumber, 
    )
    if err != nil{
 	 log.Fatal(err)
    }
-	 return user , nil
+	 return order , nil
  }
  
- func (s *Store) GetUserById(id int) (*types.User,error){
-   rows,err := s.db.Query("SELECT * FROM users WHERE id = ?",id)
-   if err != nil {
-	 return nil,err
-   }
-   u := new(types.User)
-   for rows.Next(){
-	   u,err = scanRowsIntoUsers(rows)
-	   if err != nil{
-		  return nil,err
-	   }
-   }
-   if u.ID == 0{
-	 return nil, fmt.Errorf("user not found")
-   }
-   return u,nil
+
+ func(s *Store) CreateOrderItem(OrderItem types.OrderItem) error{
+   _,err := s.db.Exec("INSERT INTO order_items(id,product_id,order_id,quantity,created_at) VALUES (?,?,?,?,?)",
+  OrderItem.ID,OrderItem.ProductID,OrderItem.OrderID,OrderItem.Quantity,OrderItem.CreatedAt)
+  if err!= nil {
+	return err
+  }
+  return nil
  }
  
- func (s *Store) CreateUser(user types.User) error {
-   _,err := s.db.Exec("INSERT INTO users (firstName,lastName,email,password,DoB,sex,role) VALUES (?,?,?,?,?,?,?)",user.FirstName,user.LastName,user.Email,user.Password,user.DoB,user.Sex,user.Role)
-   if err != nil {
-	 return err
-   }
-   return nil
- }
+ func scanRowsIntoOrderItems(rows *sql.Rows) (*types.OrderItem,error){
+	orderItem := new(types.OrderItem)
+	err := rows.Scan(
+	   &orderItem.ID,
+	   &orderItem.ProductID,
+	   &orderItem.OrderID,
+	   &orderItem.Quantity,
+	   &orderItem.CreatedAt,
+	   &orderItem.UpdatedAt, 
+	)
+	if err != nil{
+	  log.Fatal(err)
+	}
+	  return orderItem , nil
+  }
