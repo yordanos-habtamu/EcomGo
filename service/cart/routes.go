@@ -1,6 +1,8 @@
 package cart
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,4 +29,16 @@ func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
 	utils.WriteError(w,http.StatusBadRequest,err)
 	return
 	}
+	if err := utils.Validate.Struct(cart); err != nil {
+		log.Printf("Validation error: %v", err)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	productIDs, err:= getCartItemsIDs(cart.Items)
+	if err != nil {
+		utils.WriteError(w,http.StatusBadRequest,err)
+	}
+   ps,err := h.productStore.GetProductByIds(productIDs)
+
 }

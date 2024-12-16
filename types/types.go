@@ -19,6 +19,7 @@ type OrderStore interface {
 type ProductStore interface {
 	CreateProduct(Product) (error)
 	GetProductById(id uint) (*Product, error)
+	GetProductByIds(ps []uint) ([]Product,error)
 	GetAllProducts() ([]Product, error)
 	UpdateProduct(id uint, payload RegisterProductPayload) (*Product, error)
 	DeleteProduct(id uint) error
@@ -101,7 +102,7 @@ type LoginUserPayload struct {
 }
 
 type CartItem struct{
-	ProductID int `json:"productID"`
+	ProductID uint `json:"productID"`
 	Quantity int `json:"quantity"`
 }
 
