@@ -13,11 +13,11 @@ import (
 
 
 type Handler struct {
-	store types.ProductStore
+	productStore types.ProductStore
 }
 
 func NewHandler(store types.ProductStore) *Handler{
-	return &Handler{store:store}
+	return &Handler{productStore:store}
 }
 
 // RegisterRoutes registers the routes for product-related operations
@@ -44,7 +44,7 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter,r *http.Request){
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
 		return
 	}
-   err := h.store.CreateProduct(types.Product{
+   err := h.productStore.CreateProduct(types.Product{
 		Name:        payload.Name,
 		Description: payload.Description,
 		Price:       payload.Price,
@@ -80,7 +80,7 @@ func (h *Handler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the product by ID from the database
-	product, err := h.store.GetProductById(productID)
+	product, err := h.productStore.GetProductById(productID)
 	if err != nil {
 		log.Printf("Failed to fetch product: %v", err)
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("product not found"))
@@ -94,7 +94,7 @@ func (h *Handler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleGetAllProducts(w http.ResponseWriter, r *http.Request) {
 	// Fetch all products from the store
-	products, err := h.store.GetAllProducts()
+	products, err := h.productStore.GetAllProducts()
 	if err != nil {
 		log.Printf("Failed to fetch products: %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch products"))
@@ -130,7 +130,7 @@ func (h *Handler) handleUpdateProduct(w http.ResponseWriter,r *http.Request){
 		return
 	}
     
-	p,err:= h.store.UpdateProduct(productID,payload)
+	p,err:= h.productStore.UpdateProduct(productID,payload)
 	if err != nil {
 		log.Printf("Failed to update the product: %v", err)
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch products"))
@@ -152,7 +152,7 @@ func (h *Handler) handleDeleteProduct(w http.ResponseWriter,r *http.Request){
 		return
 	} //
     
-	k:= h.store.DeleteProduct(productID)
+	k:= h.productStore.DeleteProduct(productID)
 	if k!=nil{
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("unable to delete the product %v",k))
 		return
@@ -170,7 +170,7 @@ func (h *Handler) handleGetProductsByCategory(w http.ResponseWriter,r *http.Requ
 		return
 	}
 	
-	products,err := h.store.GetProductsByCategory(catagory)
+	products,err := h.productStore.GetProductsByCategory(catagory)
 	   if err!=nil{
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("unable to get the catagories %v",err))
 		return
