@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
+	"github.com/yordanos-habtamu/EcomGo.git/utils"
 )
 
 
@@ -21,5 +22,9 @@ func (h *Handler) RegisterRoutes (router *mux.Router){
 }
 
 func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
-	
+	var cart types.CartCheckoutPayload
+	if err := utils.ParseJson(r,&cart); err !=nil {
+	utils.WriteError(w,http.StatusBadRequest,err)
+	return
+	}
 }
