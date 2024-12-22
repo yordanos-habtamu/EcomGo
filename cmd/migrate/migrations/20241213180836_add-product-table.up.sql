@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS products (
-    `id` SERIAL PRIMARY KEY,              -- Auto-incrementing ID
+    `id` INT UNSIGNED PRIMARY KEY,              -- Auto-incrementing ID
     `name` VARCHAR(255) NOT NULL,         -- Name of the product
     `description` TEXT NOT NULL,          -- Description of the product
     `price` DECIMAL(10, 2) NOT NULL,      -- Price with up to 2 decimal places
