@@ -4,24 +4,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+    "context"
 	"github.com/gorilla/mux"
+	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
 	"github.com/yordanos-habtamu/EcomGo.git/utils"
 )
 
+type contextKey string
+const myuser contextKey = "user"
 
 type Handler struct {
 	store types.OrderStore
 	productStore types.ProductStore
+	userStore types.UserStore
 }
 
-func NewHandler (store types.OrderStore) *Handler{
-	return &Handler{store:store}
+func NewHandler (store types.OrderStore,productStore types.ProductStore,userStore types.UserStore) *Handler{
+	return &Handler{store:store,productStore: productStore,userStore: userStore}
 }
 
 func (h *Handler) RegisterRoutes (router *mux.Router){
-	router.HandleFunc("/cart/checkout",h.handleCheckout).Methods(http.MethodPost)
+	router.HandleFunc("/cart/checkout",auth.WithJwtAuth(h.handleCheckout,h.userStore)).Methods(http.MethodPost)
 }
 
 func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
@@ -49,4 +53,8 @@ func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
    if err != nil {
 	utils.WriteError(w,http.StatusInternalServerError,err)
    }
-}     
+   utils.WriteJson(w,http.StatusOK,map[string] any{
+	   "order_id":orderId,
+	   "total_price":totalPrice,
+   })
+}  
