@@ -63,3 +63,8 @@ func WithJwtAuth(handlerFunc http.HandlerFunc,store types.UserStore) http.Handle
 	}
 
 }
+
+func GetUserIdfromContext(ctx context.Context) uint {
+	user := ctx.Value("user").(*types.User)
+	return user.ID
+}

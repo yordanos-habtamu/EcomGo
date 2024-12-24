@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-    "context"
+    
 	"github.com/gorilla/mux"
 	"github.com/yordanos-habtamu/EcomGo.git/service/auth"
 	"github.com/yordanos-habtamu/EcomGo.git/types"
@@ -29,7 +29,7 @@ func (h *Handler) RegisterRoutes (router *mux.Router){
 }
 
 func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
-	var userID int = 0
+	var userID uint = auth.GetUserIdfromContext(r.Context())
 	var cart types.CartCheckoutPayload
 	if err := utils.ParseJson(r,&cart); err !=nil {
 	utils.WriteError(w,http.StatusBadRequest,err)
@@ -49,7 +49,7 @@ func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request){
    if err != nil {
 	utils.WriteError(w,http.StatusInternalServerError,err)
    }
-   orderId, totalPrice,err := h.CreateOrder(ps,cart.Items,userID)
+   orderId, totalPrice,err := h.CreateOrder(ps,cart.Items,int(userID))
    if err != nil {
 	utils.WriteError(w,http.StatusInternalServerError,err)
    }
