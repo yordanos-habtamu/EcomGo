@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/yordanos-habtamu/EcomGo.git/service/cart"
 	"github.com/yordanos-habtamu/EcomGo.git/service/product"
 	"github.com/yordanos-habtamu/EcomGo.git/service/user"
+	"github.com/yordanos-habtamu/EcomGo.git/service/order"
 
 	"github.com/gorilla/mux"
 )
@@ -33,7 +35,9 @@ func (s *ApiServer) Run() error{
 	productHandler.RegisterRoutes(subrouter)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
-
+	orderStore := order.NewStore(s.db)
+	cartHandler := cart.NewHandler(orderStore,productStore,userStore)
+    cartHandler.RegisterRoutes(subrouter)
   
     log.Printf("Listening on %v",s.addr)
   	 return http.ListenAndServe(s.addr,router)
