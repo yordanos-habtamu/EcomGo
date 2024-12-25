@@ -1,25 +1,44 @@
-version: '3.8'
-
+version: "3.9"
 services:
   app:
-    build: .
-    ports:
-      - "8080:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecomgo-app
     environment:
-      - DB_USER=ecomgo_user
-      - DB_PWD=ecomgo_password
-      - DB_NAME=EcomGo
-      - DB_PORT=3306
-      - JWT_SECRET=your_jwt_secret
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=ecomgo_user
+      - MYSQL_PASSWORD=ecomgo_password
+      - MYSQL_DATABASE=EcomGo
+    networks:
+      - ecomgo_network
     depends_on:
       - db
+    ports:
+      - "8080:8080"
+    restart: always
 
   db:
     image: mysql:8.0
+    container_name: ecomgo-db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: EcomGo
-      MYSQL_USER: ecomgo_user
-      MYSQL_PASSWORD: ecomgo_password
+      - MYSQL_ROOT_PASSWORD=ecomgo_password
+      - MYSQL_DATABASE=EcomGo
+      - MYSQL_USER=ecomgo_user
+      - MYSQL_PASSWORD=ecomgo_password
+    networks:
+      - ecomgo_network
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    restart: always
+
+networks:
+  ecomgo_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
