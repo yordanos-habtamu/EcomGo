@@ -13,10 +13,10 @@ import (
 func main() {
 	// Read Railway env vars directly
 	cfg := mysql.Config{
-		User:                 os.Getenv("MYSQLUSER"),
-		Passwd:               os.Getenv("MYSQLPASSWORD"),
-		Addr:                 os.Getenv("MYSQLHOST") + ":" + os.Getenv("MYSQLPORT"),
-		DBName:               os.Getenv("MYSQLDATABASE"),
+		User:                 os.Getenv("DB_USER"),
+		Passwd:               os.Getenv("DB_PWD"),
+		Addr:                 os.Getenv("PUBLIC_HOST") + ":" + os.Getenv("MYSQLPORT"),
+		DBName:               os.Getenv("DB_NAME"),
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
