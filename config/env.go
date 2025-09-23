@@ -22,20 +22,24 @@ type Config struct {
 
 var Envs = initConfig();
 
-func initConfig() Config{
-	godotenv.Load()
-return Config{
-	PUBLIC_HOST:getEnv("PUBLIC_HOST","http://localhost"),
-	PORT:getEnv("PORT","8080"),
-	DB_PORT: getEnv("DB_PORT","3306"),
-	DB_USER: getEnv("DB_USER","ecomgo_user"),
-	DB_PWD: getEnv("DB_PWD","ecomgo_password"),
-	DB_NAME: getEnv("DB_NAME","EcomGo"),
-	DB_ADDR: fmt.Sprintf("%s:%s",getEnv("PUBLIC_HOST","db"),getEnv("DB_PORT","3306")),	
-    JWTExpiration: getEnvAsInt("JWTExpiration",3600 * 24 * 7),
-	JWT_SECRET: getEnv("JWT_SECRET","$2b$10$yG7Ivndj5Q7FxXHvfY1Xh.1yqFOsclCAXPYygwKopAZwgUDEn2WS6"),
+func initConfig() Config {
+    if err := godotenv.Load(); err != nil {
+        fmt.Println("No .env file found, using defaults")
+    }
+
+    return Config{
+        PUBLIC_HOST:   getEnv("PUBLIC_HOST", "127.0.0.1"),
+        PORT:          getEnv("PORT", "8080"),
+        DB_PORT:       getEnv("DB_PORT", "3306"),
+        DB_USER:       getEnv("DB_USER", "root"),
+        DB_PWD:        getEnv("DB_PWD", "NewStrongPassword123!"),
+        DB_NAME:       getEnv("DB_NAME", "EcomGo"),
+        DB_ADDR:       fmt.Sprintf("localhost:%s", getEnv("DB_PORT", "3306")),
+        JWTExpiration: getEnvAsInt("JWTExpiration", 3600*24*7),
+        JWT_SECRET:    getEnv("JWT_SECRET", "$2b$10$yG7Ivndj5Q7FxXHvfY1Xh.1yqFOsclCAXPYygwKopAZwgUDEn2WS6"),
+    }
 }
-}
+
 
 func getEnv(key,fallback string) string{
 if value,ok := os.LookupEnv(key); ok{

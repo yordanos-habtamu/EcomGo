@@ -1,12 +1,25 @@
-# Binaries for programs and plugins
+# Binaries for Go programs
 *.exe
 *.dll
 *.so
 *.dylib
+*.test
+*.out
+app        # if your compiled Go binary is called 'app'
+
+# Environment files
 .env
-# Build output directories
+
+# Build directories
 bin/
 build/
 out/
+
+# Node.js / frontend dependencies
 node_modules/
+
+# IDE / editor files
+.vscode/
+.idea/
+
 
