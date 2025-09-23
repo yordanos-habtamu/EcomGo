@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -12,42 +11,33 @@ import (
 )
 
 func main() {
-	// Build MySQL config using Railway variables or local fallbacks
+	// Read Railway env vars directly
 	cfg := mysql.Config{
-		User:                 getEnv("RAILWAY_MYSQL_USER", "root"),
-		Passwd:               getEnv("RAILWAY_MYSQL_PASSWORD", "password"),
-		Addr:                 fmt.Sprintf("%s:%s",
-			getEnv("RAILWAY_MYSQL_HOST", "127.0.0.1"),
-			getEnv("RAILWAY_MYSQL_PORT", "3306")),
-		DBName:               getEnv("RAILWAY_MYSQL_DATABASE", "EcomGo"),
+		User:                 os.Getenv("DB_USER"),
+		Passwd:               os.Getenv("DB_PWD"),
+		Addr:                 os.Getenv("PUBLIC_HOST") + ":" + os.Getenv("MYSQLPORT"),
+		DBName:               os.Getenv("DB_NAME"),
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
 
-	// Connect to the database
 	database, err := db.NewMysqlStorage(cfg)
 	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+		log.Fatal(err)
 	}
 
-	// Ping database to ensure connection is alive
-	if err := database.Ping(); err != nil {
-		log.Fatal("Database ping failed:", err)
-	}
-	log.Println("Database connected successfully")
+	initStorage(database)
 
-	// Start the API server
-	server := api.NewApiServer(":"+getEnv("PORT", "8080"), database)
+	server := api.NewApiServer(":"+os.Getenv("PORT"), database)
 	if err := server.Run(); err != nil {
-		log.Fatal("Server failed to start:", err)
+		log.Fatal(err)
 	}
 }
 
-// getEnv reads an environment variable or returns fallback
-func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok && value != "" {
-		return value
+func initStorage(db *sql.DB) {
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
 	}
-	return fallback
+	log.Println("Database connected successfully")
 }
