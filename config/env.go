@@ -28,16 +28,20 @@ func initConfig() Config {
 		fmt.Println("No .env file found, using environment variables")
 	}
 
-	dbHost := getEnv("MYSQLHOST" // Railway injects MYSQLHOST
-	dbPort := getEnv("MYSQLPORT")      // Railway injects MYSQLPORT
+	// Use Railway environment variables if they exist, otherwise fallback to local
+	dbHost := getEnv("RAILWAY_MYSQL_HOST", getEnv("MYSQLHOST", "127.0.0.1"))
+	dbPort := getEnv("RAILWAY_MYSQL_PORT", getEnv("MYSQLPORT", "3306"))
+	dbUser := getEnv("RAILWAY_MYSQL_USER", getEnv("MYSQLUSER", "root"))
+	dbPwd := getEnv("RAILWAY_MYSQL_PASSWORD", getEnv("MYSQLPASSWORD", "password"))
+	dbName := getEnv("RAILWAY_MYSQL_DATABASE", getEnv("MYSQLDATABASE", "EcomGo"))
 
 	return Config{
-		PUBLIC_HOST:   getEnv("PUBLIC_HOST", ),
-		PORT:          getEnv("PORT"),
+		PUBLIC_HOST:   getEnv("PUBLIC_HOST", "127.0.0.1"),
+		PORT:          getEnv("PORT", "8080"),
 		DB_PORT:       dbPort,
-		DB_USER:       getEnv("MYSQLUSER"),
-		DB_PWD:        getEnv("MYSQLPASSWORD"),
-		DB_NAME:       getEnv("MYSQLDATABASE"),
+		DB_USER:       dbUser,
+		DB_PWD:        dbPwd,
+		DB_NAME:       dbName,
 		DB_ADDR:       fmt.Sprintf("%s:%s", dbHost, dbPort),
 		JWTExpiration: getEnvAsInt("JWTExpiration", 3600*24*7),
 		JWT_SECRET:    getEnv("JWT_SECRET", "$2b$10$yG7Ivndj5Q7FxXHvfY1Xh.1yqFOsclCAXPYygwKopAZwgUDEn2WS6"),
@@ -46,7 +50,7 @@ func initConfig() Config {
 
 // getEnv reads an environment variable or returns fallback
 func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
+	if value, ok := os.LookupEnv(key); ok && value != "" {
 		return value
 	}
 	return fallback
@@ -54,7 +58,7 @@ func getEnv(key, fallback string) string {
 
 // getEnvAsInt reads an environment variable as int64 or returns fallback
 func getEnvAsInt(key string, fallback int64) int64 {
-	if value, ok := os.LookupEnv(key); ok {
+	if value, ok := os.LookupEnv(key); ok && value != "" {
 		i, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			return fallback
