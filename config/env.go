@@ -28,16 +28,16 @@ func initConfig() Config {
 		fmt.Println("No .env file found, using environment variables")
 	}
 
-	dbHost := getEnv("MYSQLHOST", "127.0.0.1") // Railway injects MYSQLHOST
-	dbPort := getEnv("MYSQLPORT", "3306")      // Railway injects MYSQLPORT
+	dbHost := getEnv("MYSQLHOST" // Railway injects MYSQLHOST
+	dbPort := getEnv("MYSQLPORT")      // Railway injects MYSQLPORT
 
 	return Config{
-		PUBLIC_HOST:   getEnv("PUBLIC_HOST", "127.0.0.1"),
-		PORT:          getEnv("PORT", "8080"),
+		PUBLIC_HOST:   getEnv("PUBLIC_HOST", ),
+		PORT:          getEnv("PORT"),
 		DB_PORT:       dbPort,
-		DB_USER:       getEnv("MYSQLUSER", "root"),
-		DB_PWD:        getEnv("MYSQLPASSWORD", "NewStrongPassword123!"),
-		DB_NAME:       getEnv("MYSQLDATABASE", "EcomGo"),
+		DB_USER:       getEnv("MYSQLUSER"),
+		DB_PWD:        getEnv("MYSQLPASSWORD"),
+		DB_NAME:       getEnv("MYSQLDATABASE"),
 		DB_ADDR:       fmt.Sprintf("%s:%s", dbHost, dbPort),
 		JWTExpiration: getEnvAsInt("JWTExpiration", 3600*24*7),
 		JWT_SECRET:    getEnv("JWT_SECRET", "$2b$10$yG7Ivndj5Q7FxXHvfY1Xh.1yqFOsclCAXPYygwKopAZwgUDEn2WS6"),
