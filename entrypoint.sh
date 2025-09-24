@@ -1,13 +1,8 @@
 #!/bin/sh
 
-# Convert Railway's MYSQL_PUBLIC_URL to Go/MySQL driver format
 if [ -n "$MYSQL_PUBLIC_URL" ]; then
-  # Example: mysql://user:pass@host:port/db
-  USER=$(echo "$MYSQL_PUBLIC_URL" | sed -E 's|mysql://([^:]+):.*|\1|')
-  PASS=$(echo "$MYSQL_PUBLIC_URL" | sed -E 's|mysql://[^:]+:([^@]+)@.*|\1|')
-  HOSTPORT=$(echo "$MYSQL_PUBLIC_URL" | sed -E 's|mysql://[^@]+@([^/]+)/.*|\1|')
-  DBNAME=$(echo "$MYSQL_PUBLIC_URL" | sed -E 's|.*/([^?]+).*|\1|')
-  MIGRATE_DSN="$USER:$PASS@tcp($HOSTPORT)/$DBNAME"
+  # Use the Railway-provided URL directly for migrate
+  MIGRATE_DSN="$MYSQL_PUBLIC_URL"
 else
   echo "MYSQL_PUBLIC_URL is not set"
   exit 1
