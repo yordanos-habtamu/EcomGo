@@ -15,7 +15,7 @@ func main() {
 	cfg := mysql.Config{
 		User:                 os.Getenv("DB_USER"),
 		Passwd:               os.Getenv("DB_PWD"),
-		Addr:                 os.Getenv("PUBLIC_HOST") + ":" + os.Getenv("MYSQLPORT"),
+		Addr:                 os.Getenv("PUBLIC_HOST") + ":" + os.Getenv("DB_PORT"),
 		DBName:               os.Getenv("DB_NAME"),
 		Net:                  "tcp",
 		AllowNativePasswords: true,

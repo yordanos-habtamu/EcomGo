@@ -29,11 +29,11 @@ func initConfig() Config {
 	}
 
 	// Use Railway environment variables if they exist, otherwise fallback to local
-	dbHost := getEnv("RAILWAY_MYSQL_HOST", getEnv("MYSQLHOST", "127.0.0.1"))
-	dbPort := getEnv("RAILWAY_MYSQL_PORT", getEnv("MYSQLPORT", "3306"))
-	dbUser := getEnv("RAILWAY_MYSQL_USER", getEnv("MYSQLUSER", "root"))
-	dbPwd := getEnv("RAILWAY_MYSQL_PASSWORD", getEnv("MYSQLPASSWORD", "password"))
-	dbName := getEnv("RAILWAY_MYSQL_DATABASE", getEnv("MYSQLDATABASE", "EcomGo"))
+	dbHost := getEnv("RAILWAY_MYSQL_HOST", getEnv("PUBLIC_HOST", "mysql.railway.internal"))
+	dbPort := getEnv("RAILWAY_MYSQL_PORT", getEnv("DB_PORT", "3306"))
+	dbUser := getEnv("RAILWAY_MYSQL_USER", getEnv("DB_USER", "root"))
+	dbPwd := getEnv("RAILWAY_MYSQL_PASSWORD", getEnv("DB_PWD", "ICHWAvfflzTVBrImVuuivMJEGoRqvWlB"))
+	dbName := getEnv("RAILWAY_MYSQL_DATABASE", getEnv("DB_NAME", "railway"))
 
 	return Config{
 		PUBLIC_HOST:   getEnv("PUBLIC_HOST", "127.0.0.1"),
