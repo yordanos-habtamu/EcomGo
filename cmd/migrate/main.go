@@ -2,28 +2,42 @@ package main
 
 import (
 	"log"
-	"github.com/golang-migrate/migrate/v4/database/mysql"
+	"net/url"
 	"os"
+	"strings"
+
+	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
-	"github.com/yordanos-habtamu/EcomGo.git/db"
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/yordanos-habtamu/EcomGo.git/db"
 )
 
 func main(){
 	
-	dsn := os.Getenv("MYSQL_PUBLIC_URL")
-	if dsn == "" {
-		log.Fatal("MYSQL_PUBLIC_URL environment variable is missing")
-	}
+	  rawDSN := os.Getenv("MYSQL_PUBLIC_URL")
+    if rawDSN == "" {
+        log.Fatal("MYSQL_PUBLIC_URL environment variable is missing")
+    }
 
-	db, err := db.NewMySQLStorageFromURL(dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err != nil{
-		log.Fatal(err)
-	}
+    // Convert mysql://... to Go MySQL driver format
+    parsed, err := url.Parse(rawDSN)
+    if err != nil {
+        log.Fatalf("Invalid DSN: %v", err)
+    }
+    user := parsed.User.Username()
+    pass, _ := parsed.User.Password()
+    host := parsed.Host
+    dbname := strings.TrimPrefix(parsed.Path, "/")
+    goDSN := user + ":" + pass + "@tcp(" + host + ")/" + dbname + "?parseTime=true"
+
+    // Connect to MySQL using the converted DSN
+		db, err := db.NewMySQLStorageFromURL(goDSN)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+
 	driver,err := mysql.WithInstance(db,&mysql.Config{})
 	if err != nil{
 		log.Fatal(err)
