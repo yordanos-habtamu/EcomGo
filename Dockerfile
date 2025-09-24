@@ -35,12 +35,16 @@ RUN apk add --no-cache bash && \
 COPY --from=builder /app/myapp .
 COPY --from=builder /app/migrations /app/migrations
 
-# Ensure the binary is executable
-RUN chmod +x myapp
+
+# Copy the entrypoint script
+COPY entrypoint.sh .
+
+# Ensure the binary and script are executable
+RUN chmod +x myapp entrypoint.sh
 
 # Expose the application's port
 EXPOSE 8080
 
-# Command to run the migrations and start the app
-CMD ["sh", "-c", "migrate -path /app/migrations -database $MYSQL_PUBLIC_URL up && ./myapp"]
+# Use the entrypoint script
+CMD ["sh", "entrypoint.sh"]
 
