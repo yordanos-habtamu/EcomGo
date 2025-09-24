@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS products (
-    `id` INT UNSIGNED PRIMARY KEY,              -- Auto-incrementing ID
-    `name` VARCHAR(255) NOT NULL,         -- Name of the product
-    `description` TEXT NOT NULL,          -- Description of the product
-    `price` DECIMAL(10, 2) NOT NULL,      -- Price with up to 2 decimal places
-    `stock` INT NOT NULL,                 -- Number of items in stock
-    `category` VARCHAR(255) NOT NULL,     -- Category of the product
-    `img_url` TEXT,                       -- URL for the product image
-    `created_at` TIMESTAMP NOT NULL DEFAULT NOW(), -- Record creation timestamp
-    `updated_at` TIMESTAMP NOT NULL DEFAULT NOW(), -- Last update timestamp
-    `is_active` BOOLEAN NOT NULL DEFAULT TRUE     -- Whether the product is active
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Auto-incrementing ID
+    `name` VARCHAR(255) NOT NULL,
+    `description` TEXT NOT NULL,
+    `price` DECIMAL(10, 2) NOT NULL,
+    `stock` INT NOT NULL,
+    `category` VARCHAR(255) NOT NULL,
+    `img_url` TEXT,
+    `created_at` TIMESTAMP NOT NULL DEFAULT NOW(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT NOW(),
+    `is_active` BOOLEAN NOT NULL DEFAULT TRUE
 );
