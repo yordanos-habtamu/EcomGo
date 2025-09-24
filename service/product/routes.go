@@ -53,10 +53,10 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter,r *http.Request){
 		ImgUrl:      payload.ImgUrl,
 	})
 	if err != nil {
-		log.Printf("Error creating product : %v",err)
-		http.Error(w,"Error creating product",http.StatusInternalServerError)
-	    return
-		} 
+		  log.Printf("Error creating product: %v", err)
+    utils.WriteError(w, http.StatusInternalServerError, err)
+    return
+}
 
 		utils.WriteJson(w,http.StatusCreated,map[string]string{"message":"product created successfully"})
 
