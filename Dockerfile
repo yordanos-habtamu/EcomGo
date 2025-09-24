@@ -42,4 +42,5 @@ RUN chmod +x myapp
 EXPOSE 8080
 
 # Command to run the migrations and start the app
-CMD ["sh", "-c", "migrate -path /app/migrations -database 'mysql://ecomgo_user:ecomgo_password@tcp(db:3306)/EcomGo' up && ./myapp"]
+CMD ["sh", "-c", "migrate -path /app/migrations -database $MYSQL_PUBLIC_URL up && ./myapp"]
+
