@@ -3,18 +3,20 @@ package db
 import (
 	"database/sql"
 	"log"
-
-	"github.com/go-sql-driver/mysql" // Import the MySQL driver
 )
 
-func NewMysqlStorage(cfg mysql.Config) (*sql.DB,error) {
-   db,err := sql.Open(
-     "mysql",
-     cfg.FormatDSN(),
-   )
-   if err != nil{
-    log.Fatal(err)
-   }
-    return db,err
+// NewMySQLStorageFromURL creates a DB connection using a full DSN
+func NewMySQLStorageFromURL(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		log.Fatal("Failed to ping DB:", err)
+		return nil, err
+	}
+
+	log.Println("✅ Connected to MySQL via DB_URL!")
+	return db, nil
 }
-	

@@ -5,22 +5,22 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	"os"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-mysqlCfg "github.com/go-sql-driver/mysql"
-	"github.com/yordanos-habtamu/EcomGo.git/config"
+
 	"github.com/yordanos-habtamu/EcomGo.git/db"
 	"github.com/golang-migrate/migrate/v4"
 )
 
 func main(){
-	db,err := db.NewMysqlStorage(mysqlCfg.Config{
-		User:config.Envs.DB_USER,
-		Passwd: config.Envs.DB_PWD,
-		Addr: config.Envs.DB_ADDR,
-		DBName: config.Envs.DB_NAME,
-		Net: "tcp",
-		AllowNativePasswords: true,
-		ParseTime: true,
-	})
+	
+	dsn := os.Getenv("MYSQL_PUBLIC_URL")
+	if dsn == "" {
+		log.Fatal("MYSQL_PUBLIC_URL environment variable is missing")
+	}
+
+	db, err := db.NewMySQLStorageFromURL(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err != nil{
 		log.Fatal(err)
 	}
